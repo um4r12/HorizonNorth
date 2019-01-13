@@ -33,15 +33,4 @@ data.sort_values(by=['release_date'], inplace=True, ascending=True)
 data['vote_average'] = data['vote_average'].fillna(0).astype(np.int)
 data.sort_values(by=['vote_average'], inplace=True, ascending=True)
 
-
-def genList(genre):
-    amountperGenre = []
-
-    for i in range(1950,2018):
-        temp = data.loc[(data['release_date'].dt.year == i) & (data['genres'] == genre)] #'Action'
-        amountperGenre.append(temp.shape[0])
-    return amountperGenre
-
-if __name__ == '__main__':
-
-    genList(genreType)
+data.to_csv('out.csv', encoding='utf-8', index=True)
