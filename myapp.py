@@ -4,7 +4,8 @@ import dash_html_components as html
 import pandas as pd
 import plotly.graph_objs as go
 import numpy as np
-import hackv2 as dp
+import retrieveData as dp
+import hackv2 as parseData
 
 def getDropDownValues():
     return [{'label': 'Action', 'value': 'Action'},
@@ -43,18 +44,18 @@ numFemales= np.random.randint(low=0, high=20, size=50)
 
 
 
-app.layout = html.Div(children=[         
+app.layout = html.Div(children=[
     html.H1('Horizon North'),
     html.Div([
     html.P('Genre trends across time'),
     html.P('This conversion happens behind the scenes by Dash JavaScript front-end')
-    ]),    
+    ]),
     dcc.Graph(id='freq-graph'),
     dcc.Dropdown(
         id='genre-type',
         options=getDropDownValues(),
         value='action'
-    )        
+    )
 ])
 
 
@@ -63,7 +64,7 @@ app.layout = html.Div(children=[
     [dash.dependencies.Input('genre-type', 'value')])
 
 def update_graph(genreType):
-   
+
     count = dp.genList(genreType.title())
     return {
             'data': [go.Scatter(
@@ -71,11 +72,10 @@ def update_graph(genreType):
                 y = count,
                 mode = 'lines+markers',
                 name = 'Count'
-            )               
-                
-            ]
-        }    
+            )
 
+            ]
+        }
 
 if __name__ == '__main__':
     app.run_server(debug=True)
