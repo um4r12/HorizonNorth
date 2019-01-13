@@ -8,16 +8,16 @@ def genList(genre):
     for i in range(1950,2018):
         temp = data.loc[(data['release_date'].dt.year == i) & (data['genres'] == genre)] #'Action'
         amountperGenre.append(temp.shape[0])
-    print(amountperGenre)
+    #print(amountperGenre)
     return amountperGenre
 # generates total movies for that year
 def genTotal():
     total = []
     for i in range(1950,2018):
         temp = data.loc[(data['release_date'].dt.year == i)]
-        total.append(temp)
+        total.append(temp.shape[0])
     return total
 
 if __name__ == '__main__':
 
-    genList('Action')
+    genList(genre)

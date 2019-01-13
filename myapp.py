@@ -8,7 +8,9 @@ import retrieveData as dp
 import hackv2 as parseData
 
 def getDropDownValues():
-    return [{'label': 'Action', 'value': 'Action'},
+    return [
+{'label': 'All Movies', 'value' : 'All'},
+{'label': 'Action', 'value': 'Action'},
 {'label': 'Adventure', 'value': 'Adventure'},
 {'label': 'Animation', 'value': 'Animation'},
 {'label': 'Comedy', 'value': 'Comedy'},
@@ -30,33 +32,31 @@ def getDropDownValues():
 {'label': 'Western', 'value': 'Western'}]
 
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['assets/styles.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 
 
-yearBeginnning = 1970
-years = list(range(yearBeginnning, yearBeginnning+50))
-numMales= np.random.randint(low=0, high=20, size=50)
-numFemales= np.random.randint(low=0, high=20, size=50)
-
-
-
-
 app.layout = html.Div(children=[
-    html.H1('Horizon North'),
-    html.Div([
-    html.P('Genre trends across time'),
-    html.P('This conversion happens behind the scenes by Dash JavaScript front-end')
-    ]),
+        html.H1(children='Horizon North',
+                    style = {
+                'text-align': 'center', 'color': 'white'}),
+            html.Div([
+            html.H2(children='Movie genre trends across time (1950-2017)',
+                   style = {'text-align': 'center', 'color': 'white'
+                    }),
+            ]),       
     dcc.Graph(id='freq-graph'),
     dcc.Dropdown(
         id='genre-type',
         options=getDropDownValues(),
-        value='action'
+        value=['all'],
+        multi=True
     )
-])
+],
+                      style ={'background-image': 'linear-gradient(to right, #909090 ,#181818)',
+                               'font-family':'Optima, sans-serif'}                      )
 
 
 @app.callback(
@@ -64,17 +64,34 @@ app.layout = html.Div(children=[
     [dash.dependencies.Input('genre-type', 'value')])
 
 def update_graph(genreType):
+ 
+    traces = []
+    years = [i for i in range(1950,2018)]
+    for genre in genreType:
+        if (genre.lower() == 'all'):
+        
+            trace = go.Scatter(
+                    x = years[:len(years)-1],
+                    y = dp.genTotal()[:-1],
+                    mode = 'lines+markers',
+                    name = genre
+                )
+        else:
+            
+            trace = go.Scatter(
+                    x = years,
+                    y = dp.genList(genre.title())[:-1],
+                    mode = 'lines+markers',
+                    name = genre
+                )
+        traces.append(trace)
 
-    count = dp.genList(genreType.title())
+    count = [i for i in range(1950,2018)]
     return {
-            'data': [go.Scatter(
-                x = [i for i in range(1950,2018)],
-                y = count,
-                mode = 'lines+markers',
-                name = 'Count'
-            )
-
-            ]
+            'data': traces,
+            #'layout': {
+             #   'paper_bgcolor':'#C0C0C0'
+            #}            
         }
 
 if __name__ == '__main__':
